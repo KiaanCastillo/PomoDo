@@ -192,8 +192,8 @@
                 android:orientation="horizontal">
 
                 <CheckBox
-                    android:id="@+id/pomodoroCheckbox"
-                    android:layout_width="24dp"
+                    android:id="@+id/todo_checkbox"
+                    android:layout_width="28dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="12dp"
                     android:layout_weight="0" />
@@ -205,7 +205,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/pomodoroTitle"
+                        android:id="@+id/todo_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
@@ -215,7 +215,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/pomodoroDate"
+                        android:id="@+id/todo_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/outfit_regular"
@@ -227,7 +227,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/pomodoroWidgetDuration"
+                android:id="@+id/todo_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
