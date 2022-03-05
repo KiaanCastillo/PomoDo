@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.421" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_button_primary.xml" value="0.421" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/ic_launcher_background.xml" value="0.421" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/icon_logo.xml" value="0.421" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/font/fonts.xml" value="0.47708333333333336" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/layout/activity_main.xml" value="0.446875" />
         <entry key="..\:/dev/SFU/IAT359/PomoDo/app/src/main/res/layout/activity_main.xml" value="0.446875" />

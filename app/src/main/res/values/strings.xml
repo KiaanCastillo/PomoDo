@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PomoDo</string>
+
+    <string name="add_new_task_button_text">Add New Task</string>
 </resources>

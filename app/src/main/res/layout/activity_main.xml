@@ -4,15 +4,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@color/yellow"
+    android:textAlignment="center"
     tools:context=".MainActivity">
 
-    <TextView
+    <Button
+        android:id="@+id/addNewTaskButton"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_button_primary"
+        android:fontFamily="@font/outfit_medium"
+        android:text="@string/add_new_task_button_text"
+        android:textAllCaps="false"
+        app:icon="@drawable/icon_circle_plus"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/headerLogoImageView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:tint="@color/yellow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/icon_logo" />
+
+    <TextView
+        android:id="@+id/pageTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="177dp"
+        android:fontFamily="@font/outfit_medium"
+        android:text="Tasks"
+        android:textColor="@color/dark"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/headerLogoImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
