@@ -2,4 +2,7 @@
     <string name="app_name">PomoDo</string>
 
     <string name="add_new_task_button_text">Add New Task</string>
+
+    <string name="stats_widget_title">Today\'s Progress</string>
+    <string name="stats_widget_stats_description">Tasks Complete</string>
 </resources>
