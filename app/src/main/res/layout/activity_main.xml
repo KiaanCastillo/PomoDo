@@ -144,7 +144,7 @@
                     android:layout_weight="0"
                     android:fontFamily="@font/outfit_regular"
                     android:gravity="end"
-                    android:text="50 mins"
+                    android:text="(50 mins)"
                     android:textColor="@color/dark"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -157,7 +157,8 @@
                 android:fontFamily="@font/outfit_regular"
                 android:text="@string/stats_widget_stats_description"
                 android:textAlignment="viewEnd"
-                android:textColor="@color/dark" />
+                android:textColor="@color/dark"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 
