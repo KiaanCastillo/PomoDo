@@ -4,13 +4,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
 data class Todo(
+    val id: String,
     val name: String,
     val duration: Int? = null,
     val date: String? = null,
@@ -18,10 +21,11 @@ data class Todo(
 )
 
 class MainActivity : AppCompatActivity() {
-    lateinit var database: DatabaseReference
+    private lateinit var database: DatabaseReference
     lateinit var sharedPreferences: SharedPreferences
     lateinit var uid: String
 
+    var todos = ArrayList<Todo>()
     var addNewTodoDuration = 0
     var addNewTodoDate = ""
 
@@ -34,6 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         initUser()
         initListeners()
+        initData()
     }
 
     private fun initUser() {
@@ -41,6 +46,26 @@ class MainActivity : AppCompatActivity() {
             uid = sharedPreferences.getString(getString(R.string.shared_preferences_uid_key), "")!!
         } else {
             createUser()
+        }
+    }
+
+    private fun initData() {
+        database
+        .child(getString(R.string.database_users_collection_key))
+        .child(uid)
+        .child(getString(R.string.database_todos_collection_key)).get().addOnSuccessListener {
+            for (todoSnapshot: DataSnapshot in it.children) {
+                val readId: String = todoSnapshot.key.toString()
+                val readName: String = todoSnapshot.child("name").value.toString()
+                val readDuration: Int = todoSnapshot.child("duration").value.toString().toInt()
+                val readDate: String = todoSnapshot.child("date").value.toString()
+
+                val readTodo = Todo(readId, readName, readDuration, readDate)
+                todos.add(readTodo)
+            }
+            Log.i("PomoDo", todos.toString())
+        }.addOnFailureListener {
+            Log.i("firebase", "Error getting data", it)
         }
     }
 
@@ -64,8 +89,8 @@ class MainActivity : AppCompatActivity() {
     fun addNewTodo(name: String,
                    duration: Int? = null,
                    date: String? = null) {
-        val newTodo = Todo(name, duration, date, null)
-        val newTodoKey = database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).push().key
+        val newTodoKey: String = database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).push().key.toString()
+        val newTodo = Todo(newTodoKey, name, duration, date, null)
         database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).child(newTodoKey!!).setValue(newTodo)
 
         addNewTodoDuration = 0
