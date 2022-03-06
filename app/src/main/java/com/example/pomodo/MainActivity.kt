@@ -18,8 +18,8 @@ import java.util.*
 
 data class Todo(
     val name: String,
-    val duration: Int? = null,
-    val date: Date? = null,
+//    val duration: Int? = null,
+//    val date: Date? = null,
     val isChecked: Boolean,
 //    val createdAt: Date,
 //    val updatedAt: Date
@@ -59,15 +59,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    fun addNewTodo(name: String,
+    fun addNewTodo(name: String,
 //                   duration: Int? = null,
 //                   date: Date? = null,
-//                   isChecked: Boolean,
+                   isChecked: Boolean) {
 //                   createdAt: Date,
 //                   updatedAt: Date) {
-//        val newTodo = Todo(name, duration, date, isChecked)
-//        database.child("users").child(userId).setValue(user)
-//    }
+        val newTodo = Todo(name, isChecked)
+        val newTodoKey = database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).push().key
+        database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).child(newTodoKey!!).setValue(newTodo)
+    }
 
     fun showAddNewTodoDialog(view: View) {
         val addNewTodoDialog: Dialog = Dialog(this)
@@ -80,7 +81,9 @@ class MainActivity : AppCompatActivity() {
         val dateInputButton: Button = addNewTodoDialog.findViewById(R.id.add_new_todo_date_button) as Button
 
         addNewTodoButton.setOnClickListener {
+            addNewTodo(nameInput.text.toString(), false)
             Toast.makeText(this, "Added new todo ${nameInput.text}", Toast.LENGTH_LONG).show()
+            addNewTodoDialog.dismiss()
         }
 
         addNewTodoDialog.show()
