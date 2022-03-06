@@ -9,22 +9,23 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/addNewTaskButton"
+        android:id="@+id/show_add_new_todo_button"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_button_primary"
         android:fontFamily="@font/outfit_medium"
-        android:text="@string/add_new_task_button_text"
+        android:text="@string/add_new_todo_button_text"
         android:textAllCaps="false"
+        android:onClick="showAddNewTodoDialog"
         app:icon="@drawable/icon_circle_plus"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/headerLogoImageView"
+        android:id="@+id/header_logo_image_view"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -35,21 +36,21 @@
         app:tint="@color/yellow" />
 
     <TextView
-        android:id="@+id/pageTitleTextView"
+        android:id="@+id/page_title_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/outfit_medium"
-        android:text="Tasks"
+        android:text="@string/app_name"
         android:textColor="@color/dark"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.41"
-        app:layout_constraintStart_toEndOf="@+id/headerLogoImageView"
+        app:layout_constraintStart_toEndOf="@+id/header_logo_image_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/statsWidget"
+        android:id="@+id/stats_widget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -61,10 +62,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerLogoImageView">
+        app:layout_constraintTop_toBottomOf="@+id/header_logo_image_view">
 
         <LinearLayout
-            android:id="@+id/statsWidgetTitleContainer"
+            android:id="@+id/stats_widget_title_container"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -72,7 +73,6 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/statsWidgetTitleIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="12dp"
@@ -80,7 +80,6 @@
                 app:srcCompat="@drawable/icon_stats" />
 
             <LinearLayout
-                android:id="@+id/statsWidgetTitleTextContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -88,7 +87,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/statsWidgetTitleText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
@@ -98,7 +96,6 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/textView3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/outfit_regular"
@@ -109,7 +106,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/statsWidgetStatsContainer"
+            android:id="@+id/stats_widget_stats_container"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -126,7 +123,7 @@
                 android:textAlignment="viewEnd">
 
                 <TextView
-                    android:id="@+id/statsWidgetStatsCount"
+                    android:id="@+id/stats_widget_stats_ratio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -137,7 +134,7 @@
                     android:textSize="24sp" />
 
                 <TextView
-                    android:id="@+id/statsWidgetStatsDuration"
+                    android:id="@+id/stats_widget_stats_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
@@ -150,7 +147,6 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/statsWidgetStatsDescription"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -163,7 +159,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/pomodoroWidget"
+        android:id="@+id/pomodoro_widget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -174,7 +170,7 @@
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statsWidget">
+        app:layout_constraintTop_toBottomOf="@+id/stats_widget">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -192,7 +188,7 @@
                 android:orientation="horizontal">
 
                 <CheckBox
-                    android:id="@+id/todo_checkbox"
+                    android:id="@+id/pomodoro_widget_checkbox"
                     android:layout_width="28dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="12dp"
@@ -205,7 +201,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/todo_title"
+                        android:id="@+id/pomodoro_widget_todo_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
@@ -215,7 +211,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/todo_date"
+                        android:id="@+id/pomodoro_widget_todo_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/outfit_regular"
@@ -227,7 +223,7 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/todo_duration"
+                android:id="@+id/pomodoro_widget_todo_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
@@ -238,7 +234,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/startPomodoroButton"
+            android:id="@+id/pomodoro_widget_start_button"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
