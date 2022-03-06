@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_add_new_todo_detail_tag"
+    android:gravity="center"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="4dp">
+
+    <TextView
+        android:id="@+id/add_new_todo_detail_tag_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/outfit_regular"
+        android:text="TextView"
+        android:textColor="@color/grey"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/add_new_todo_detail_tag_delete_button"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_weight="0"
+        android:background="@android:color/transparent"
+        app:icon="@drawable/ic_icon_x"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconTint="@color/grey" />
+</LinearLayout>

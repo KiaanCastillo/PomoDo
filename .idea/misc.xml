@@ -4,8 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.421" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_add_new_todo_detail_tag.xml" value="0.235" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_add_new_todo_dialog.xml" value="0.235" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_button_primary.xml" value="0.421" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_button_primary_white.xml" value="0.2505" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_new_todo_detail_tag.xml" value="0.235" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_pomodoro_widget.xml" value="0.2475" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_stats_widget.xml" value="0.307" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/bg_todo_widget.xml" value="0.2505" />
@@ -13,7 +16,10 @@
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/icon_circle_plus.xml" value="0.2505" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/drawable/icon_logo.xml" value="0.421" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/font/fonts.xml" value="0.47708333333333336" />
-        <entry key="..\:/dev/PomoDo/app/src/main/res/layout/activity_main.xml" value="0.446875" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/layout/component_add_new_todo_detail_tag.xml" value="0.446875" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/layout/component_new_todo_detail_tag.xml" value="0.446875" />
+        <entry key="..\:/dev/PomoDo/app/src/main/res/layout/dialog_add_new_todo.xml" value="0.446875" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/layout/dialog_new_todo.xml" value="0.446875" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/layout/widget_stats.xml" value="0.446875" />
         <entry key="..\:/dev/PomoDo/app/src/main/res/layout/widget_todo.xml" value="0.446875" />
