@@ -18,7 +18,6 @@
         android:fontFamily="@font/outfit_medium"
         android:text="@string/add_new_todo_button_text"
         android:textAllCaps="false"
-        android:onClick="showAddNewTodoDialog"
         app:icon="@drawable/icon_circle_plus"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
