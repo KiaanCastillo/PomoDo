@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">PomoDo</string>
+    <string name="shared_preferences_uid_key">uid</string>
+    <string name="database_users_collection_key">users</string>
+    <string name="database_todos_collection_key">todos</string>
 
     <string name="add_new_todo_button_text">Add New Todo</string>
 
