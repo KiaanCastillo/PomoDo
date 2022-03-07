@@ -6,9 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
@@ -37,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = this?.getPreferences(Context.MODE_PRIVATE) ?: return
 
         initUser()
-        initListeners()
         initData()
+        initListeners()
     }
 
     private fun initUser() {
@@ -63,7 +64,8 @@ class MainActivity : AppCompatActivity() {
                 val readTodo = Todo(readId, readName, readDuration, readDate)
                 todos.add(readTodo)
             }
-            Log.i("PomoDo", todos.toString())
+                
+            displayTodos(todos)
         }.addOnFailureListener {
             Log.i("firebase", "Error getting data", it)
         }
@@ -84,6 +86,12 @@ class MainActivity : AppCompatActivity() {
             uid = newUid!!
             database.child(getString(R.string.database_users_collection_key)).child(uid).child("uid").setValue(uid)
         }
+    }
+
+    private fun displayTodos(todos: ArrayList<Todo>) {
+        val todosContainer: RecyclerView = findViewById(R.id.todos_container)
+        todosContainer.layoutManager = LinearLayoutManager(this)
+        todosContainer.adapter = TodosContainerAdapter(todos)
     }
 
     fun addNewTodo(name: String,

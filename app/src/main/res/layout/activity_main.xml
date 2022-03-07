@@ -8,21 +8,6 @@
     android:textAlignment="center"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/show_add_new_todo_button"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/bg_button_primary"
-        android:fontFamily="@font/outfit_medium"
-        android:text="@string/add_new_todo_button_text"
-        android:textAllCaps="false"
-        app:icon="@drawable/icon_circle_plus"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageView
         android:id="@+id/header_logo_image_view"
         android:layout_width="40dp"
@@ -249,5 +234,34 @@
             app:iconPadding="2dp"
             app:iconTint="@color/dark" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/todos_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pomodoro_widget" />
+
+    <Button
+        android:id="@+id/show_add_new_todo_button"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_button_primary"
+        android:fontFamily="@font/outfit_medium"
+        android:textAllCaps="false"
+        app:icon="@drawable/icon_plus"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
