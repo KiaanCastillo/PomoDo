@@ -12,9 +12,12 @@ import android.widget.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun MainActivity.showAddNewTodoDialog(view: View) {
-    val addNewTodoDialog: Dialog = Dialog(this)
-    addNewTodoDialog.setContentView(R.layout.dialog_add_new_todo)
+fun TodosContainerAdapter.showEditTodoDialog(view: View, currentTodo: Todo) {
+    val calendar = Calendar.getInstance()
+    val dateFormat = "EEE, MMM d"
+    val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+    val addNewTodoDialog: Dialog = Dialog(context)
+    addNewTodoDialog.setContentView(R.layout.dialog_todo)
     addNewTodoDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     val nameInput: EditText = addNewTodoDialog.findViewById(R.id.add_new_todo_input_name) as EditText
@@ -22,13 +25,12 @@ fun MainActivity.showAddNewTodoDialog(view: View) {
     val durationInputButton: Button = addNewTodoDialog.findViewById(R.id.add_new_todo_duration_button) as Button
     val dateInputButton: Button = addNewTodoDialog.findViewById(R.id.add_new_todo_date_button) as Button
 
-    val calendar = Calendar.getInstance()
-    val dateFormat = "EEE, MMM d"
+    nameInput.setText(currentTodo.name)
 
-    val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
 
     durationInputButton.setOnClickListener {
-        val durationDialogBuilder = AlertDialog.Builder(this)
+        val durationDialogBuilder = AlertDialog.Builder(context)
         val durationsStrings = arrayOf("5 mins", "10 mins", "15 mins", "20 mins", "25 mins", "30 mins", "35 mins", "40 mins", "45 mins", "50 mins", "55 mins", "60 mins")
         val durations = arrayOf(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
 
@@ -82,7 +84,7 @@ fun MainActivity.showAddNewTodoDialog(view: View) {
         }
 
         DatePickerDialog(
-            this,
+            context,
             dateSetListener,
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -92,7 +94,7 @@ fun MainActivity.showAddNewTodoDialog(view: View) {
     addNewTodoButton.setOnClickListener {
         val name = nameInput.text.toString()
 
-        addNewTodo(name, MainActivity.addNewTodoDuration, MainActivity.addNewTodoDate)
+        MainActivity.addNewTodo(name, MainActivity.addNewTodoDuration, MainActivity.addNewTodoDate)
         addNewTodoDialog.dismiss()
     }
 

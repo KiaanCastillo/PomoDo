@@ -15,10 +15,10 @@ import com.google.firebase.ktx.Firebase
 import kotlin.collections.ArrayList
 
 data class Todo(
-    val id: String,
-    val name: String,
-    val duration: Number? = null,
-    val date: String? = null,
+    var id: String,
+    var name: String,
+    var duration: Number? = null,
+    var date: String? = null,
     var completeDate: Number? = null
 )
 
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var sharedPreferences: SharedPreferences
         lateinit var uid: String
 
-        lateinit var activeTodo: Todo
+//        lateinit var activeTodo: Todo
 
         lateinit var todosContainer: RecyclerView
         lateinit var todosContainerAdapter: TodosContainerAdapter
@@ -37,8 +37,15 @@ class MainActivity : AppCompatActivity() {
         var addNewTodoDuration = 0
         var addNewTodoDate = ""
 
-        fun showAddNewTodoDialog() {
+        fun addNewTodo(name: String,
+                       duration: Int? = null,
+                       date: String? = null) {
+            val newTodoKey: String = database.child("users").child(uid).child("todos").push().key.toString()
+            val newTodo = Todo(newTodoKey, name, duration, date, null)
+            database.child("users").child(uid).child("todos").child(newTodoKey!!).setValue(newTodo)
 
+            addNewTodoDuration = 0
+            addNewTodoDate = ""
         }
     }
 
@@ -65,7 +72,8 @@ class MainActivity : AppCompatActivity() {
     private fun initListeners() {
         val addNewTodoButton: Button = findViewById(R.id.show_add_new_todo_button)
         addNewTodoButton.setOnClickListener {
-            showAddNewTodoDialog(addNewTodoButton)
+            val addNewTodoDialog: TodoDialog = TodoDialog(this)
+            addNewTodoDialog.showDialog()
         }
     }
 
@@ -79,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun displayActiveTodo() {
+    fun displayActiveTodo(activeTodo: Todo) {
         val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_todo_name)
         val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_todo_date)
         val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_todo_duration)
@@ -91,16 +99,5 @@ class MainActivity : AppCompatActivity() {
         if (activeTodo.date == "") {
             activeTodoDateTextView.visibility = View.GONE
         }
-    }
-
-    fun addNewTodo(name: String,
-                   duration: Int? = null,
-                   date: String? = null) {
-        val newTodoKey: String = database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).push().key.toString()
-        val newTodo = Todo(newTodoKey, name, duration, date, null)
-        database.child(getString(R.string.database_users_collection_key)).child(uid).child(getString(R.string.database_todos_collection_key)).child(newTodoKey!!).setValue(newTodo)
-
-        addNewTodoDuration = 0
-        addNewTodoDate = ""
     }
 }

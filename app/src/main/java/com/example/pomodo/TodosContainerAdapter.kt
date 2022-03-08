@@ -1,5 +1,6 @@
 package com.example.pomodo
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -7,11 +8,12 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import com.google.firebase.database.*
 
-class TodosContainerAdapter(val todos : ArrayList<Todo>) :
+class TodosContainerAdapter(val todos : ArrayList<Todo>, val context : Context) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
     lateinit var activeTodo: Todo
 
@@ -31,7 +33,6 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>) :
         var todo = todos[position]
         holder.name.text = todo.name
         holder.checkbox.isChecked = todo.completeDate.toString() != "null"
-        Log.i("PomoDo Complete Date:", todo.toString())
 
         if (todo.date.toString() == "") {
             holder.date.visibility = View.GONE
@@ -43,6 +44,10 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>) :
             holder.duration.visibility = View.GONE
         } else {
             holder.duration.text = "${todo.duration} mins"
+        }
+
+        holder.todoWidget.setOnClickListener {
+            showEditTodoDialog(holder.todoWidget, todo)
         }
 
 //        holder.todoWidget.setOnLongClickListener {

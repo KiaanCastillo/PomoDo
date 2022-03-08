@@ -10,7 +10,7 @@ fun MainActivity.initData() {
     MainActivity.todosContainer = findViewById(R.id.todos_container)
     MainActivity.todosContainer.layoutManager = LinearLayoutManager(this)
 
-    MainActivity.todosContainerAdapter = TodosContainerAdapter(MainActivity.todosList)
+    MainActivity.todosContainerAdapter = TodosContainerAdapter(MainActivity.todosList, this)
     MainActivity.todosContainer.adapter = MainActivity.todosContainerAdapter
 
     MainActivity.database
@@ -33,10 +33,10 @@ fun MainActivity.initData() {
                     readTodo = Todo(readId, readName, readDuration, readDate, null)
                 }
 
+                Log.i("PomoDo", "$readTodo")
 
                 if (previousChildName.toString() == "null") {
-                    MainActivity.activeTodo = readTodo
-                    displayActiveTodo()
+                    displayActiveTodo(readTodo)
                 } else {
                     MainActivity.todosContainerAdapter.addItem(readTodo)
                 }
