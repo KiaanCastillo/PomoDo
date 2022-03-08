@@ -30,6 +30,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var uid: String
 
     lateinit var activeTodo: Todo
+
+    lateinit var todosContainer: RecyclerView
+    lateinit var todosContainerAdapter: TodosContainerAdapter
+
     var todosList = ArrayList<Todo>()
     var addNewTodoDuration = 0
     var addNewTodoDate = ""
@@ -55,33 +59,50 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
+        todosContainer = findViewById(R.id.todos_container)
+        todosContainer.layoutManager = LinearLayoutManager(this)
+
+        todosContainerAdapter = TodosContainerAdapter(todosList)
+        todosContainer.adapter = todosContainerAdapter
+
         database
-        .child(getString(R.string.database_users_collection_key))
-        .child(uid)
-        .child(getString(R.string.database_todos_collection_key)).get().addOnSuccessListener {
-            val readTodos = ArrayList<Todo>()
-            var isFirstItem = true
-            for (todoSnapshot: DataSnapshot in it.children) {
-                val readId: String = todoSnapshot.key.toString()
-                val readName: String = todoSnapshot.child("name").value.toString()
-                val readDuration: Int = todoSnapshot.child("duration").value.toString().toInt()
-                val readDate: String = todoSnapshot.child("date").value.toString()
+            .child(getString(R.string.database_users_collection_key))
+            .child(uid)
+            .child(getString(R.string.database_todos_collection_key)).addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val readId: String = snapshot.key.toString()
+                val readName: String = snapshot.child("name").value.toString()
+                val readDuration: Int = snapshot.child("duration").value.toString().toInt()
+                val readDate: String = snapshot.child("date").value.toString()
 
 
                 val readTodo = Todo(readId, readName, readDuration, readDate)
 
-                if (isFirstItem) {
+                if (previousChildName.toString() == "null") {
                     activeTodo = readTodo
-                    isFirstItem = false
+                    displayActiveTodo()
                 } else {
-                    readTodos.add(readTodo)
+                    todosContainerAdapter.addItem(readTodo)
                 }
             }
-                
-            displayTodos(readTodos)
-        }.addOnFailureListener {
-            Log.i("PomoDo Firebase", "Error getting data", it)
-        }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.i("PomoDo", "Not yet implemented")
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                Log.i("PomoDo", "Not yet implemented")
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+                Log.i("PomoDo", "Not yet implemented")
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.i("PomoDo", "Not yet implemented")
+            }
+
+        })
     }
 
     private fun initListeners() {
@@ -101,9 +122,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayTodos(todos: ArrayList<Todo>) {
-        todosList = todos
-
+    private fun displayActiveTodo() {
         val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_todo_name)
         val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_todo_date)
         val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_todo_duration)
@@ -115,10 +134,6 @@ class MainActivity : AppCompatActivity() {
         if (activeTodo.date == "") {
             activeTodoDateTextView.visibility = View.GONE
         }
-
-        val todosContainer: RecyclerView = findViewById(R.id.todos_container)
-        todosContainer.layoutManager = LinearLayoutManager(this)
-        todosContainer.adapter = TodosContainerAdapter(todosList)
     }
 
     fun addNewTodo(name: String,

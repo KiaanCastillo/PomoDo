@@ -45,5 +45,10 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>) :
         }
     }
 
+    fun addItem(newTodo: Todo) {
+        todos.add(newTodo)
+        notifyDataSetChanged()
+    }
+
     override fun getItemCount() = todos.size
 }
