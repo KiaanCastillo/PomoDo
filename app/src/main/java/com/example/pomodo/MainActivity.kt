@@ -12,31 +12,31 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import org.w3c.dom.Text
-import java.util.*
 import kotlin.collections.ArrayList
 
 data class Todo(
     val id: String,
     val name: String,
-    val duration: Int? = null,
+    val duration: Number? = null,
     val date: String? = null,
-    val completeDate: Calendar? = null
+    var completeDate: Number? = null
 )
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var database: DatabaseReference
-    lateinit var sharedPreferences: SharedPreferences
-    lateinit var uid: String
+    companion object {
+        lateinit var database: DatabaseReference
+        lateinit var sharedPreferences: SharedPreferences
+        lateinit var uid: String
 
-    lateinit var activeTodo: Todo
+        lateinit var activeTodo: Todo
 
-    lateinit var todosContainer: RecyclerView
-    lateinit var todosContainerAdapter: TodosContainerAdapter
+        lateinit var todosContainer: RecyclerView
+        lateinit var todosContainerAdapter: TodosContainerAdapter
 
-    var todosList = ArrayList<Todo>()
-    var addNewTodoDuration = 0
-    var addNewTodoDate = ""
+        var todosList = ArrayList<Todo>()
+        var addNewTodoDuration = 0
+        var addNewTodoDate = ""
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,11 +72,18 @@ class MainActivity : AppCompatActivity() {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val readId: String = snapshot.key.toString()
                 val readName: String = snapshot.child("name").value.toString()
-                val readDuration: Int = snapshot.child("duration").value.toString().toInt()
+                val readDuration: Number = snapshot.child("duration").value.toString().toInt()
                 val readDate: String = snapshot.child("date").value.toString()
+                val readCompleteDate: Number
+                var readTodo: Todo
 
+                if (snapshot.child("completeDate").exists()) {
+                    readCompleteDate = snapshot.child("completeDate").value.toString().toLong()
+                    readTodo = Todo(readId, readName, readDuration, readDate, readCompleteDate)
+                } else {
+                    readTodo = Todo(readId, readName, readDuration, readDate, null)
+                }
 
-                val readTodo = Todo(readId, readName, readDuration, readDate)
 
                 if (previousChildName.toString() == "null") {
                     activeTodo = readTodo

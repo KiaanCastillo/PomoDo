@@ -44,11 +44,11 @@ fun MainActivity.showAddNewTodoDialog(view: View) {
             durationTagText.text = durationsStrings[durationIndex]
             durationTagDeleteButton.setOnClickListener {
                 durationTagContainer.removeView(durationTag)
-                addNewTodoDuration = 0
+                MainActivity.addNewTodoDuration = 0
             }
 
             durationTagContainer.addView(durationTag, durationTagContainer.childCount - 1)
-            addNewTodoDuration = durations[durationIndex]
+            MainActivity.addNewTodoDuration = durations[durationIndex]
         }
 
         val durationsDialog = durationDialogBuilder.create()
@@ -74,11 +74,11 @@ fun MainActivity.showAddNewTodoDialog(view: View) {
                 calendar.set(Calendar.YEAR, year)
                 calendar.set(Calendar.MONTH, monthOfYear)
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                addNewTodoDate = ""
+                MainActivity.addNewTodoDate = ""
             }
 
             dateTagContainer.addView(dateTag, dateTagContainer.childCount - 1)
-            addNewTodoDate = SimpleDateFormat(dateFormat, Locale.CANADA).format(calendar.time)
+            MainActivity.addNewTodoDate = SimpleDateFormat(dateFormat, Locale.CANADA).format(calendar.time)
         }
 
         DatePickerDialog(
@@ -92,7 +92,7 @@ fun MainActivity.showAddNewTodoDialog(view: View) {
     addNewTodoButton.setOnClickListener {
         val name = nameInput.text.toString()
 
-        addNewTodo(name, addNewTodoDuration, addNewTodoDate)
+        addNewTodo(name, MainActivity.addNewTodoDuration, MainActivity.addNewTodoDate)
         addNewTodoDialog.dismiss()
     }
 

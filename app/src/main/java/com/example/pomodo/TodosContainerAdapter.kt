@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import java.util.ArrayList
+import java.util.*
+import com.google.firebase.database.*
 
 class TodosContainerAdapter(val todos : ArrayList<Todo>) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
+    lateinit var activeTodo: Todo
+
     class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
         val name: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_name)
         val date: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_date)
@@ -26,14 +28,21 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val todo = todos[position]
+        var todo = todos[position]
         holder.name.text = todo.name
-        holder.date.text = todo.date
-        holder.duration.text = "${todo.duration} mins"
-        holder.checkbox.isChecked = todo.completeDate != null
+        holder.checkbox.isChecked = todo.completeDate.toString() != "null"
+        Log.i("PomoDo Complete Date:", todo.toString())
 
         if (todo.date.toString() == "") {
             holder.date.visibility = View.GONE
+        } else {
+            holder.date.text = todo.date
+        }
+
+        if (todo.duration == 0) {
+            holder.duration.visibility = View.GONE
+        } else {
+            holder.duration.text = "${todo.duration} mins"
         }
 
 //        holder.todoWidget.setOnLongClickListener {
@@ -41,12 +50,19 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>) :
 //        }
 
         holder.checkbox.setOnClickListener {
-            Log.i("PomoDo", "Checked: ${todo.name}")
+            if (todo.completeDate.toString() != "null") {
+                todo.completeDate = null
+            } else {
+                val calendar = Calendar.getInstance()
+                todo.completeDate = calendar.timeInMillis
+            }
+
+            MainActivity.database.child("users").child(MainActivity.uid).child("todos").child(todo.id).setValue(todo)
         }
     }
 
     fun addItem(newTodo: Todo) {
-        todos.add(newTodo)
+        todos.add(0, newTodo)
         notifyDataSetChanged()
     }
 
