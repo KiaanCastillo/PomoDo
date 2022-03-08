@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         var todosList = ArrayList<Todo>()
         var addNewTodoDuration = 0
         var addNewTodoDate = ""
+
+        fun showAddNewTodoDialog() {
+
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,60 +62,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initData() {
-        todosContainer = findViewById(R.id.todos_container)
-        todosContainer.layoutManager = LinearLayoutManager(this)
-
-        todosContainerAdapter = TodosContainerAdapter(todosList)
-        todosContainer.adapter = todosContainerAdapter
-
-        database
-            .child(getString(R.string.database_users_collection_key))
-            .child(uid)
-            .child(getString(R.string.database_todos_collection_key)).addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val readId: String = snapshot.key.toString()
-                val readName: String = snapshot.child("name").value.toString()
-                val readDuration: Number = snapshot.child("duration").value.toString().toInt()
-                val readDate: String = snapshot.child("date").value.toString()
-                val readCompleteDate: Number
-                var readTodo: Todo
-
-                if (snapshot.child("completeDate").exists()) {
-                    readCompleteDate = snapshot.child("completeDate").value.toString().toLong()
-                    readTodo = Todo(readId, readName, readDuration, readDate, readCompleteDate)
-                } else {
-                    readTodo = Todo(readId, readName, readDuration, readDate, null)
-                }
-
-
-                if (previousChildName.toString() == "null") {
-                    activeTodo = readTodo
-                    displayActiveTodo()
-                } else {
-                    todosContainerAdapter.addItem(readTodo)
-                }
-            }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.i("PomoDo", "Not yet implemented")
-            }
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {
-                Log.i("PomoDo", "Not yet implemented")
-            }
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.i("PomoDo", "Not yet implemented")
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.i("PomoDo", "Not yet implemented")
-            }
-
-        })
-    }
-
     private fun initListeners() {
         val addNewTodoButton: Button = findViewById(R.id.show_add_new_todo_button)
         addNewTodoButton.setOnClickListener {
@@ -129,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayActiveTodo() {
+    fun displayActiveTodo() {
         val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_todo_name)
         val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_todo_date)
         val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_todo_duration)

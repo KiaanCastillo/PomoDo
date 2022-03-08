@@ -55,6 +55,9 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>) :
             } else {
                 val calendar = Calendar.getInstance()
                 todo.completeDate = calendar.timeInMillis
+                todos.remove(todo)
+                todos.add(todo)
+                notifyDataSetChanged()
             }
 
             MainActivity.database.child("users").child(MainActivity.uid).child("todos").child(todo.id).setValue(todo)
