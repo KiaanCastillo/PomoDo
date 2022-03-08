@@ -5,13 +5,16 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import org.w3c.dom.Text
 import java.util.*
+import kotlin.collections.ArrayList
 
 data class Todo(
     val id: String,
@@ -26,7 +29,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
     lateinit var uid: String
 
-    var todos = ArrayList<Todo>()
+    lateinit var activeTodo: Todo
+    var todosList = ArrayList<Todo>()
     var addNewTodoDuration = 0
     var addNewTodoDate = ""
 
@@ -55,19 +59,28 @@ class MainActivity : AppCompatActivity() {
         .child(getString(R.string.database_users_collection_key))
         .child(uid)
         .child(getString(R.string.database_todos_collection_key)).get().addOnSuccessListener {
+            val readTodos = ArrayList<Todo>()
+            var isFirstItem = true
             for (todoSnapshot: DataSnapshot in it.children) {
                 val readId: String = todoSnapshot.key.toString()
                 val readName: String = todoSnapshot.child("name").value.toString()
                 val readDuration: Int = todoSnapshot.child("duration").value.toString().toInt()
                 val readDate: String = todoSnapshot.child("date").value.toString()
 
+
                 val readTodo = Todo(readId, readName, readDuration, readDate)
-                todos.add(readTodo)
+
+                if (isFirstItem) {
+                    activeTodo = readTodo
+                    isFirstItem = false
+                } else {
+                    readTodos.add(readTodo)
+                }
             }
                 
-            displayTodos(todos)
+            displayTodos(readTodos)
         }.addOnFailureListener {
-            Log.i("firebase", "Error getting data", it)
+            Log.i("PomoDo Firebase", "Error getting data", it)
         }
     }
 
@@ -89,9 +102,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayTodos(todos: ArrayList<Todo>) {
+        todosList = todos
+
+        val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_todo_name)
+        val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_todo_date)
+        val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_todo_duration)
+
+        activeTodoNameTextView.text = activeTodo.name
+        activeTodoDateTextView.text = activeTodo.date
+        activeTodoDurationTextView.text = "${activeTodo.duration} mins"
+
+        if (activeTodo.date == "") {
+            activeTodoDateTextView.visibility = View.GONE
+        }
+
         val todosContainer: RecyclerView = findViewById(R.id.todos_container)
         todosContainer.layoutManager = LinearLayoutManager(this)
-        todosContainer.adapter = TodosContainerAdapter(todos)
+        todosContainer.adapter = TodosContainerAdapter(todosList)
     }
 
     fun addNewTodo(name: String,

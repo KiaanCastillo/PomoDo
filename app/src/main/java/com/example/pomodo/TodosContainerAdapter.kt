@@ -1,16 +1,19 @@
 package com.example.pomodo
 
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import java.util.ArrayList
 
-class TodosContainerAdapter(private val todos : ArrayList<Todo>) :
+class TodosContainerAdapter(val todos : ArrayList<Todo>) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
-    class ViewHolder(todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
+    class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
         val name: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_name)
         val date: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_date)
         val duration: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_duration)
@@ -28,6 +31,18 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>) :
         holder.date.text = todo.date
         holder.duration.text = "${todo.duration} mins"
         holder.checkbox.isChecked = todo.completeDate != null
+
+        if (todo.date.toString() == "") {
+            holder.date.visibility = View.GONE
+        }
+
+//        holder.todoWidget.setOnLongClickListener {
+//            Log.i("PomoDo", "Long Pressed: ${todo.name}")
+//        }
+
+        holder.checkbox.setOnClickListener {
+            Log.i("PomoDo", "Checked: ${todo.name}")
+        }
     }
 
     override fun getItemCount() = todos.size
