@@ -37,11 +37,13 @@ class Database {
     constructor(uid: String) {
         this.uid = uid
         userTodosDatabaseReference = database.child(userCollectionKey).child(uid).child(todosCollectionKey)
+        database.child(userCollectionKey).child(uid).child("uid").setValue(uid)
     }
 
     constructor() {
         uid = database.child(userCollectionKey).push().key.toString()
         userTodosDatabaseReference = database.child(userCollectionKey).child(uid).child(todosCollectionKey)
+        database.child(userCollectionKey).child(uid).child("uid").setValue(uid)
     }
 
     fun addNewTodo(newTodo: Todo) {

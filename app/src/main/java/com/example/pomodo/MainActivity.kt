@@ -44,15 +44,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUser() {
-        if (sharedPreferences.contains(getString(R.string.shared_preferences_uid_key))) {
-            uid = sharedPreferences.getString(getString(R.string.shared_preferences_uid_key), "")!!
+        val sharedPreferencesUidKey = "uid"
+        if (sharedPreferences.contains(sharedPreferencesUidKey)) {
+            uid = sharedPreferences.getString(sharedPreferencesUidKey, "")!!
+            Log.i("PomoDo", "Exists: $uid")
             database = Database(uid)
         } else {
             database = Database()
             uid = database.uid
-            val sharedPreferencesUidKey = "uid"
+            Log.i("PomoDo", "New User: $uid")
             with (sharedPreferences.edit()) {
                 putString(sharedPreferencesUidKey, uid)
+                apply()
             }
         }
     }
