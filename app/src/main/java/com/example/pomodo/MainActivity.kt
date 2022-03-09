@@ -24,36 +24,18 @@ data class Todo(
 
 class MainActivity : AppCompatActivity() {
     companion object {
-        lateinit var database: DatabaseReference
+        lateinit var database: Database
         lateinit var sharedPreferences: SharedPreferences
         lateinit var uid: String
 
-//        lateinit var activeTodo: Todo
-
         lateinit var todosContainer: RecyclerView
         lateinit var todosContainerAdapter: TodosContainerAdapter
-
-        var todosList = ArrayList<Todo>()
-        var addNewTodoDuration = 0
-        var addNewTodoDate = ""
-
-        fun addNewTodo(name: String,
-                       duration: Int? = null,
-                       date: String? = null) {
-            val newTodoKey: String = database.child("users").child(uid).child("todos").push().key.toString()
-            val newTodo = Todo(newTodoKey, name, duration, date, null)
-            database.child("users").child(uid).child("todos").child(newTodoKey!!).setValue(newTodo)
-
-            addNewTodoDuration = 0
-            addNewTodoDate = ""
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        database = Firebase.database.reference
         sharedPreferences = this?.getPreferences(Context.MODE_PRIVATE) ?: return
 
         initUser()
@@ -64,8 +46,14 @@ class MainActivity : AppCompatActivity() {
     private fun initUser() {
         if (sharedPreferences.contains(getString(R.string.shared_preferences_uid_key))) {
             uid = sharedPreferences.getString(getString(R.string.shared_preferences_uid_key), "")!!
+            database = Database(uid)
         } else {
-            createUser()
+            database = Database()
+            uid = database.uid
+            val sharedPreferencesUidKey = "uid"
+            with (sharedPreferences.edit()) {
+                putString(sharedPreferencesUidKey, uid)
+            }
         }
     }
 
@@ -74,16 +62,6 @@ class MainActivity : AppCompatActivity() {
         addNewTodoButton.setOnClickListener {
             val addNewTodoDialog: TodoDialog = TodoDialog(this)
             addNewTodoDialog.showDialog()
-        }
-    }
-
-    private fun createUser() {
-        with (sharedPreferences.edit()) {
-            val newUid = database.child(getString(R.string.database_users_collection_key)).push().key
-            putString(getString(R.string.shared_preferences_uid_key), newUid)
-            apply()
-            uid = newUid!!
-            database.child(getString(R.string.database_users_collection_key)).child(uid).child("uid").setValue(uid)
         }
     }
 
@@ -99,23 +77,5 @@ class MainActivity : AppCompatActivity() {
         if (activeTodo.date == "") {
             activeTodoDateTextView.visibility = View.GONE
         }
-    }
-
-    fun createTodoFromSnapshot(snapshot: DataSnapshot) : Todo {
-        val readId: String = snapshot.key.toString()
-        val readName: String = snapshot.child("name").value.toString()
-        val readDuration: Number = snapshot.child("duration").value.toString().toInt()
-        val readDate: String = snapshot.child("date").value.toString()
-        val readCompleteDate: Number
-        var todo: Todo
-
-        if (snapshot.child("completeDate").exists()) {
-            readCompleteDate = snapshot.child("completeDate").value.toString().toLong()
-            todo = Todo(readId, readName, readDuration, readDate, readCompleteDate)
-        } else {
-            todo = Todo(readId, readName, readDuration, readDate, null)
-        }
-
-        return todo
     }
 }

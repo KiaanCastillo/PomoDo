@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import com.google.firebase.database.*
@@ -34,6 +34,8 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : C
         holder.name.text = todo.name
         holder.checkbox.isChecked = todo.completeDate.toString() != "null"
 
+        Log.i("PomoDo", "onBindViewHolder()")
+
         if (todo.date.toString().isEmpty()) {
             holder.date.visibility = View.GONE
         } else {
@@ -56,15 +58,16 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : C
         holder.checkbox.setOnClickListener {
             if (todo.completeDate.toString() != "null") {
                 todo.completeDate = null
+                todos.remove(todo)
+                todos.add(0, todo)
             } else {
                 val calendar = Calendar.getInstance()
                 todo.completeDate = calendar.timeInMillis
                 todos.remove(todo)
                 todos.add(todo)
-                notifyDataSetChanged()
             }
-
-            MainActivity.database.child("users").child(MainActivity.uid).child("todos").child(todo.id).setValue(todo)
+            notifyDataSetChanged()
+            database.updateTodo(todo)
         }
     }
 

@@ -6,8 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.opengl.Visibility
-import android.util.Log
+import com.example.pomodo.MainActivity.Companion.database
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
@@ -16,8 +15,8 @@ import java.util.*
 
 class TodoDialog {
     lateinit var dialog: Dialog
-    private lateinit var context: Context
-    private lateinit var inflater: LayoutInflater
+    private var context: Context
+    private var inflater: LayoutInflater
 
     lateinit var nameEditText: EditText
     lateinit var actionButton: Button
@@ -89,7 +88,7 @@ class TodoDialog {
         }
 
         deleteButton.setOnClickListener {
-            MainActivity.database.child("users").child(MainActivity.uid).child("todos").child(todo.id).removeValue()
+            database.deleteTodo(todo)
             dialog.dismiss()
         }
     }
@@ -169,13 +168,11 @@ class TodoDialog {
 
     private fun addNewTodo() {
         if (isNameEditTextEmpty()) { return }
-        val newTodoKey: String = MainActivity.database.child("users").child(MainActivity.uid).child("todos").push().key.toString()
-        val newTodoName: String = nameEditText.text.toString()
 
-        todo.id = newTodoKey
+        val newTodoName: String = nameEditText.text.toString()
         todo.name = newTodoName
 
-        MainActivity.database.child("users").child(MainActivity.uid).child("todos").child(newTodoKey!!).setValue(todo)
+        database.addNewTodo(todo)
         dialog.dismiss()
     }
 
@@ -193,7 +190,7 @@ class TodoDialog {
         val newTodoName: String = nameEditText.text.toString()
         todo.name = newTodoName
 
-        MainActivity.database.child("users").child(MainActivity.uid).child("todos").child(todo.id).setValue(todo)
+        database.updateTodo(todo)
         dialog.dismiss()
     }
 }
