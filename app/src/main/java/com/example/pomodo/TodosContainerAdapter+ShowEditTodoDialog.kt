@@ -17,7 +17,7 @@ fun TodosContainerAdapter.showEditTodoDialog(view: View, currentTodo: Todo) {
     val dateFormat = "EEE, MMM d"
     val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
     val addNewTodoDialog: Dialog = Dialog(context)
-    addNewTodoDialog.setContentView(R.layout.dialog_todo)
+    addNewTodoDialog.setContentView(R.layout.dialog_add_new_todo)
     addNewTodoDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     val nameInput: EditText = addNewTodoDialog.findViewById(R.id.add_new_todo_input_name) as EditText

@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 import com.google.firebase.database.*
 
-class TodosContainerAdapter(val todos : ArrayList<Todo>, val context : Context) :
+class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : Context) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
     lateinit var activeTodo: Todo
 
@@ -34,25 +34,24 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>, val context : Context) 
         holder.name.text = todo.name
         holder.checkbox.isChecked = todo.completeDate.toString() != "null"
 
-        if (todo.date.toString() == "") {
+        if (todo.date.toString().isEmpty()) {
             holder.date.visibility = View.GONE
         } else {
+            holder.date.visibility = View.VISIBLE
             holder.date.text = todo.date
         }
 
-        if (todo.duration == 0) {
+        if (todo.duration.toString() == "0") {
             holder.duration.visibility = View.GONE
         } else {
+            holder.duration.visibility = View.VISIBLE
             holder.duration.text = "${todo.duration} mins"
         }
 
         holder.todoWidget.setOnClickListener {
-            showEditTodoDialog(holder.todoWidget, todo)
+            val editTodoDialog: TodoDialog = TodoDialog(context, todo)
+            editTodoDialog.showDialog()
         }
-
-//        holder.todoWidget.setOnLongClickListener {
-//            Log.i("PomoDo", "Long Pressed: ${todo.name}")
-//        }
 
         holder.checkbox.setOnClickListener {
             if (todo.completeDate.toString() != "null") {
@@ -71,6 +70,16 @@ class TodosContainerAdapter(val todos : ArrayList<Todo>, val context : Context) 
 
     fun addItem(newTodo: Todo) {
         todos.add(0, newTodo)
+        notifyDataSetChanged()
+    }
+
+    fun removeItem(todo: Todo) {
+        todos.remove(todo)
+        notifyDataSetChanged()
+    }
+
+    fun updateItem(todo: Todo) {
+        todos[todos.indexOf(todo)] = todo
         notifyDataSetChanged()
     }
 

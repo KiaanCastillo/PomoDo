@@ -26,7 +26,7 @@
         android:layout_height="24dp"
         android:layout_weight="0"
         android:background="@android:color/transparent"
-        app:icon="@drawable/ic_icon_x"
+        app:icon="@drawable/icon_x"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
         app:iconTint="@color/grey" />

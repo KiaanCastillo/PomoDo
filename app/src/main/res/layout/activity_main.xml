@@ -229,7 +229,7 @@
             android:textAllCaps="false"
             android:textColor="@color/dark"
             app:backgroundTint="@color/white"
-            app:icon="@drawable/ic_icon_play"
+            app:icon="@drawable/icon_play"
             app:iconGravity="textStart"
             app:iconPadding="2dp"
             app:iconTint="@color/dark" />

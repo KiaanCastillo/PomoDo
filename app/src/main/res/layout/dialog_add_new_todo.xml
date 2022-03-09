@@ -79,6 +79,18 @@
                 app:iconPadding="0dp"
                 app:iconTint="@color/dark" />
 
+            <Button
+                android:id="@+id/add_new_todo_delete_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="16dp"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+                app:icon="@drawable/icon_delete"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/dark" />
+
         </LinearLayout>
 
         <Button

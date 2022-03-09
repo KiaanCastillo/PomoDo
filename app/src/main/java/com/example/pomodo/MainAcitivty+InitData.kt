@@ -19,35 +19,23 @@ fun MainActivity.initData() {
         .child(getString(R.string.database_todos_collection_key)).addChildEventListener(object :
             ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val readId: String = snapshot.key.toString()
-                val readName: String = snapshot.child("name").value.toString()
-                val readDuration: Number = snapshot.child("duration").value.toString().toInt()
-                val readDate: String = snapshot.child("date").value.toString()
-                val readCompleteDate: Number
-                var readTodo: Todo
-
-                if (snapshot.child("completeDate").exists()) {
-                    readCompleteDate = snapshot.child("completeDate").value.toString().toLong()
-                    readTodo = Todo(readId, readName, readDuration, readDate, readCompleteDate)
-                } else {
-                    readTodo = Todo(readId, readName, readDuration, readDate, null)
-                }
-
-                Log.i("PomoDo", "$readTodo")
+                var addedTodo: Todo = createTodoFromSnapshot(snapshot)
 
                 if (previousChildName.toString() == "null") {
-                    displayActiveTodo(readTodo)
+                    displayActiveTodo(addedTodo)
                 } else {
-                    MainActivity.todosContainerAdapter.addItem(readTodo)
+                    MainActivity.todosContainerAdapter.addItem(addedTodo)
                 }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                Log.i("PomoDo", "Not yet implemented")
+                var updatedTodo = createTodoFromSnapshot(snapshot)
+                MainActivity.todosContainerAdapter.updateItem(updatedTodo)
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                Log.i("PomoDo", "Not yet implemented")
+                var removedTodo = createTodoFromSnapshot(snapshot)
+                MainActivity.todosContainerAdapter.removeItem(removedTodo)
             }
 
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
