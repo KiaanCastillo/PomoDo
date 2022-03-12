@@ -25,12 +25,7 @@ fun MainActivity.initDataListeners() {
         ChildEventListener {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             var addedTodo: Todo = createTodoFromSnapshot(snapshot)
-
-            if (previousChildName.toString() == "null" && addedTodo.hasDuration()) {
-                displayActiveTodo(addedTodo)
-            } else {
-                todosContainerAdapter.addItem(addedTodo)
-            }
+            todosContainerAdapter.addItem(addedTodo)
 
             if (addedTodo.checked()) {
                 if (addedTodo.completedToday()) {
@@ -63,6 +58,5 @@ fun MainActivity.initDataListeners() {
         override fun onCancelled(error: DatabaseError) {
             Log.i("PomoDo", "Not yet implemented")
         }
-
     })
 }

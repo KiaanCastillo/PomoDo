@@ -1,5 +1,6 @@
 package com.example.pomodo
 
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodo.MainActivity.Companion.todosCompleteToday
 import com.example.pomodo.MainActivity.Companion.timeCompleteToday
+import com.example.pomodo.TodoDialog
 import java.util.*
 
 class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val context: Context) :
@@ -53,10 +56,14 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
             editTodoDialog.showDialog()
         }
 
+        holder.todoWidget.setOnLongClickListener {
+            todoLongPressListener(todo)
+            true
+        }
+
         holder.checkbox.setOnClickListener {
             todoCheckboxListener(todo)
         }
-
     }
 
     fun addItem(newTodo: Todo) {
@@ -120,6 +127,56 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         }
         return -1
     }
+
+    private fun todoLongPressListener(todo: Todo) {
+        if (todo.checked()) {
+            Toast.makeText(context, "Todo must be incomplete in order to start a Pomodoro", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!todo.hasDuration()) {
+            Toast.makeText(context, "Todo must have duration in order to start a Pomodoro", Toast.LENGTH_SHORT).show()
+            val dialog: TodoDialog = TodoDialog(context, todo)
+            dialog.showDialog()
+            return
+        }
+
+        if (this::activeTodo.isInitialized) {
+            addTodoToFront(activeTodo)
+        }
+
+        activeTodo = todo
+        displayActiveTodo()
+
+        todos.remove(todo)
+        notifyDataSetChanged()
+    }
+
+    private fun displayActiveTodo() {
+        val activeTodoNameTextView: TextView = (context as Activity).findViewById<View>(R.id.pomodoro_widget_name) as TextView
+        val activeTodoDateTextView: TextView = context.findViewById<View>(R.id.pomodoro_widget_date) as TextView
+        val activeTodoDurationTextView: TextView = context.findViewById<View>(R.id.pomodoro_widget_duration) as TextView
+        val activeTodoCheckbox: CheckBox = context.findViewById<View>(R.id.pomodoro_widget_checkbox) as CheckBox
+
+        activeTodoNameTextView.text = activeTodo.name
+        activeTodoCheckbox.isChecked = activeTodo.checked()
+
+        if (activeTodo.hasDuration()) {
+            activeTodoDurationTextView.text = "${activeTodo.duration} mins"
+            activeTodoDurationTextView.visibility = View.VISIBLE
+        } else {
+            activeTodoDurationTextView.visibility = View.GONE
+        }
+
+        if (activeTodo.hasDate()) {
+            activeTodoDateTextView.text = activeTodo.date
+            activeTodoDateTextView.visibility = View.VISIBLE
+        } else {
+            activeTodoDateTextView.visibility = View.GONE
+        }
+
+    }
+
 
     override fun getItemCount() = todos.size
 }

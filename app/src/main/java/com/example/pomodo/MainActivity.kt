@@ -62,23 +62,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun displayActiveTodo(activeTodo: Todo) {
-        val activeTodoNameTextView: TextView = findViewById(R.id.name)
-        val activeTodoDateTextView: TextView = findViewById(R.id.date)
-        val activeTodoDurationTextView: TextView = findViewById(R.id.duration)
-
-        activeTodoNameTextView.text = activeTodo.name
-        activeTodoDateTextView.text = activeTodo.date
-
-        if (activeTodo.hasDuration()) {
-            activeTodoDurationTextView.text = "${activeTodo.duration} mins"
-        }
-
-        if (!activeTodo.hasDate()) {
-            activeTodoDateTextView.visibility = View.GONE
-        }
-    }
-
     fun updateStats() {
         val statsWidgetRatio: TextView = findViewById(R.id.stats_widget_stats_ratio)
         statsWidgetRatio.text = todosCompleteToday.toString()
