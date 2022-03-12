@@ -173,7 +173,7 @@
                 android:orientation="horizontal">
 
                 <CheckBox
-                    android:id="@+id/todo_widget_checkbox"
+                    android:id="@+id/pomodoro_widget_checkbox"
                     android:layout_width="28dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="12dp"
@@ -186,21 +186,21 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/todo_widget_name"
+                        android:id="@+id/pomodoro_widget_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="@font/outfit_medium"
-                        android:text="IAT 359 YouTube Tutorials"
+                        android:text="--"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/pomodoro_widget_todo_date"
+                        android:id="@+id/pomodoro_widget_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/outfit_regular"
-                        android:text="Thu, Mar 3"
+                        android:text="--"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -208,12 +208,12 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/pomodoro_widget_todo_duration"
+                android:id="@+id/pomodoro_widget_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="@font/outfit_regular"
-                android:text="35:00"
+                android:text="--"
                 android:textColor="@color/white" />
 
         </LinearLayout>

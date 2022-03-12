@@ -4,20 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.*
-
-data class Todo(
-    var id: String,
-    var name: String,
-    var duration: Number? = null,
-    var date: String? = null,
-    var completeDate: Long? = null
-)
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -44,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         statsWidgetDate.text = SimpleDateFormat(dateFormat, Locale.CANADA).format(calendar.time)
 
         initUser()
-        initData()
+        initDataListeners()
         initListeners()
     }
 
@@ -52,12 +43,10 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferencesUidKey = "uid"
         if (sharedPreferences.contains(sharedPreferencesUidKey)) {
             uid = sharedPreferences.getString(sharedPreferencesUidKey, "")!!
-            Log.i("PomoDo", "Exists: $uid")
             database = Database(uid)
         } else {
             database = Database()
             uid = database.uid
-            Log.i("PomoDo", "New User: $uid")
             with (sharedPreferences.edit()) {
                 putString(sharedPreferencesUidKey, uid)
                 apply()
@@ -74,15 +63,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun displayActiveTodo(activeTodo: Todo) {
-        val activeTodoNameTextView: TextView = findViewById(R.id.todo_widget_name)
-        val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_todo_date)
-        val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_todo_duration)
+        val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_name)
+        val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_date)
+        val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_duration)
 
         activeTodoNameTextView.text = activeTodo.name
         activeTodoDateTextView.text = activeTodo.date
-        activeTodoDurationTextView.text = "${activeTodo.duration} mins"
 
-        if (activeTodo.date == "") {
+        if (activeTodo.hasDuration()) {
+            activeTodoDurationTextView.text = "${activeTodo.duration} mins"
+        }
+
+        if (!activeTodo.hasDate()) {
             activeTodoDateTextView.visibility = View.GONE
         }
     }

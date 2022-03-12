@@ -1,9 +1,8 @@
 package com.example.pomodo
 
-import android.text.format.DateUtils
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.pomodo.Database.Companion.createTodoFromSnapshot
+import com.example.pomodo.Todo.Companion.createTodoFromSnapshot
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -13,7 +12,7 @@ import com.example.pomodo.MainActivity.Companion.database
 import com.example.pomodo.MainActivity.Companion.timeCompleteToday
 import com.example.pomodo.MainActivity.Companion.todosCompleteToday
 
-fun MainActivity.initData() {
+fun MainActivity.initDataListeners() {
     todosContainer = findViewById(R.id.todos_container)
     todosContainer.layoutManager = LinearLayoutManager(this)
 
@@ -27,25 +26,22 @@ fun MainActivity.initData() {
         override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
             var addedTodo: Todo = createTodoFromSnapshot(snapshot)
 
-            if (previousChildName.toString() == "null") {
+            if (previousChildName.toString() == "null" && addedTodo.hasDuration()) {
                 displayActiveTodo(addedTodo)
             } else {
                 todosContainerAdapter.addItem(addedTodo)
             }
 
-            Log.i("PomoDo", "$addedTodo")
-
-            if (addedTodo.completeDate != null) {
-                if (DateUtils.isToday(addedTodo.completeDate!!)) {
+            if (addedTodo.checked()) {
+                if (addedTodo.completedToday()) {
                     todosCompleteToday++
                 }
 
-                if (addedTodo.duration != 0) {
-                    timeCompleteToday += addedTodo.duration?.toInt() ?: 0
+                if (addedTodo.hasDuration()) {
+                    timeCompleteToday += addedTodo.duration!!.toInt()
                 }
-
-                updateStats()
             }
+            updateStats()
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {

@@ -14,26 +14,6 @@ class Database {
     private var database : DatabaseReference = Firebase.database.reference
     private var userTodosDatabaseReference: DatabaseReference
 
-    companion object {
-        fun createTodoFromSnapshot(snapshot: DataSnapshot) : Todo {
-            val readId: String = snapshot.key.toString()
-            val readName: String = snapshot.child("name").value.toString()
-            val readDuration: Number = snapshot.child("duration").value.toString().toInt()
-            val readDate: String = snapshot.child("date").value.toString()
-            val readCompleteDate: Number
-            var todo: Todo
-
-            if (snapshot.child("completeDate").exists()) {
-                readCompleteDate = snapshot.child("completeDate").value.toString().toLong()
-                todo = Todo(readId, readName, readDuration, readDate, readCompleteDate)
-            } else {
-                todo = Todo(readId, readName, readDuration, readDate, null)
-            }
-
-            return todo
-        }
-    }
-
     constructor(uid: String) {
         this.uid = uid
         userTodosDatabaseReference = database.child(userCollectionKey).child(uid).child(todosCollectionKey)

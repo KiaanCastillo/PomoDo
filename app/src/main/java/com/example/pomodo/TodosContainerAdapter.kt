@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodo.MainActivity.Companion.todosCompleteToday
@@ -18,10 +19,10 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     lateinit var activeTodo: Todo
 
     class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
-        val name: TextView = todoWidget.findViewById<TextView>(R.id.todo_widget_name)
-        val date: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_date)
-        val duration: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_duration)
-        val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.todo_widget_checkbox)
+        val name: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_name)
+        val date: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_date)
+        val duration: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_duration)
+        val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.pomodoro_widget_checkbox)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -32,20 +33,20 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var todo = todos[position]
         holder.name.text = todo.name
-        holder.checkbox.isChecked = todo.completeDate.toString() != "null"
+        holder.checkbox.isChecked = todo.checked()
 
-        if (todo.date.toString().isEmpty()) {
-            holder.date.visibility = View.GONE
-        } else {
+        if (todo.hasDate()) {
             holder.date.visibility = View.VISIBLE
             holder.date.text = todo.date
+        } else {
+            holder.date.visibility = View.GONE
         }
 
-        if (todo.duration == 0) {
-            holder.duration.visibility = View.GONE
-        } else {
+        if (todo.hasDuration()) {
             holder.duration.visibility = View.VISIBLE
             holder.duration.text = "${todo.duration} mins"
+        } else {
+            holder.duration.visibility = View.GONE
         }
 
         holder.todoWidget.setOnClickListener {
@@ -60,8 +61,11 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     fun addItem(newTodo: Todo) {
-
-        todos.add(0, newTodo)
+        if (newTodo.checked()) {
+            todos.add(newTodo)
+        } else {
+            addTodoToFront(newTodo)
+        }
         notifyDataSetChanged()
     }
 
@@ -71,34 +75,43 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     fun updateItem(todo: Todo) {
-        todos[todos.indexOf(todo)] = todo
+        val index = todos.indexOf(todo)
+
+        if (index == -1) {
+            return
+        }
+
+        todos[index] = todo
         notifyDataSetChanged()
+
     }
 
     private fun todoCheckboxListener(todo: Todo) {
-        if (todo.completeDate != null) {
-            todo.completeDate = null
+        if (todo.checked()) {
+            todo.uncheck()
             todos.remove(todo)
-            todos.add(0, todo)
+            addTodoToFront(todo)
             todosCompleteToday--
 
-            if (todo.duration != 0) {
+            if (todo.hasDuration()) {
                 timeCompleteToday -= todo.duration?.toInt() ?: 0
             }
-
         } else {
-            val calendar = Calendar.getInstance()
-            todo.completeDate = calendar.timeInMillis
+            todo.check()
             todos.remove(todo)
             todos.add(todo)
             todosCompleteToday++
 
-            if (todo.duration != 0) {
+            if (todo.hasDuration()) {
                 timeCompleteToday += todo.duration?.toInt() ?: 0
             }
         }
         notifyDataSetChanged()
         database.updateTodo(todo)
+    }
+
+    private fun addTodoToFront(todo: Todo) {
+        todos.add(0, todo)
     }
 
     override fun getItemCount() = todos.size

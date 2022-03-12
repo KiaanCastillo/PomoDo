@@ -24,7 +24,7 @@ class TodoDialog {
     lateinit var dateButton: Button
     lateinit var deleteButton: Button
 
-    private var todo: Todo = Todo("", "", 0, "", null)
+    private var todo: Todo = Todo("", "")
 
     private val durationsStrings = arrayOf("5 mins", "10 mins", "15 mins", "20 mins", "25 mins", "30 mins", "35 mins", "40 mins", "45 mins", "50 mins", "55 mins", "60 mins")
     private val durations = arrayOf(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
@@ -56,12 +56,12 @@ class TodoDialog {
         actionButton.text = "Save"
 
         nameEditText.setText(todo.name)
-        if (todo.duration.toString() != "0") {
+        if (todo.hasDuration()) {
             val durationIndex = durations.indexOf(todo.duration)
             showDurationTag(durationIndex)
         }
 
-        if (todo.date.toString().isNotEmpty()) {
+        if (todo.hasDate()) {
             showDateTag(todo.date.toString())
         }
     }
@@ -115,7 +115,7 @@ class TodoDialog {
         durationTagText.text = durationsStrings[selectedDurationIndex]
         durationTagDeleteButton.setOnClickListener {
             durationTagContainer.removeView(durationTag)
-            todo.duration = 0
+            todo.clearDuration()
         }
 
         durationTagContainer.addView(durationTag, durationTagContainer.childCount - 1)
@@ -157,7 +157,7 @@ class TodoDialog {
 
         dateTagDeleteButton.setOnClickListener {
             dateTagContainer.removeView(dateTag)
-            todo.date = ""
+            todo.clearDate()
         }
 
         dateTagContainer.addView(dateTag, dateTagContainer.childCount - 1)
