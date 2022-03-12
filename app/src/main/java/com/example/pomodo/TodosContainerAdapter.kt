@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodo.MainActivity.Companion.todosCompleteToday
@@ -19,10 +18,10 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     lateinit var activeTodo: Todo
 
     class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
-        val name: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_name)
-        val date: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_date)
-        val duration: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_duration)
-        val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.pomodoro_widget_checkbox)
+        val name: TextView = todoWidget.findViewById<TextView>(R.id.name)
+        val date: TextView = todoWidget.findViewById<TextView>(R.id.date)
+        val duration: TextView = todoWidget.findViewById<TextView>(R.id.duration)
+        val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.checkbox)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -75,7 +74,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     fun updateItem(todo: Todo) {
-        val index = todos.indexOf(todo)
+        val index = findIndexOfTodo(todo)
 
         if (index == -1) {
             return
@@ -83,7 +82,6 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
         todos[index] = todo
         notifyDataSetChanged()
-
     }
 
     private fun todoCheckboxListener(todo: Todo) {
@@ -112,6 +110,15 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
     private fun addTodoToFront(todo: Todo) {
         todos.add(0, todo)
+    }
+
+    private fun findIndexOfTodo(todo: Todo) : Int {
+        for ((index, currentTodo: Todo) in todos.withIndex()) {
+            if (currentTodo.id === todo.id) {
+                return index
+            }
+        }
+        return -1
     }
 
     override fun getItemCount() = todos.size

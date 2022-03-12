@@ -63,9 +63,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun displayActiveTodo(activeTodo: Todo) {
-        val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_name)
-        val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_date)
-        val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_duration)
+        val activeTodoNameTextView: TextView = findViewById(R.id.name)
+        val activeTodoDateTextView: TextView = findViewById(R.id.date)
+        val activeTodoDurationTextView: TextView = findViewById(R.id.duration)
 
         activeTodoNameTextView.text = activeTodo.name
         activeTodoDateTextView.text = activeTodo.date
