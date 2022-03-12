@@ -7,19 +7,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import kotlin.collections.ArrayList
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class Todo(
     var id: String,
     var name: String,
     var duration: Number? = null,
     var date: String? = null,
-    var completeDate: Number? = null
+    var completeDate: Long? = null
 )
 
 class MainActivity : AppCompatActivity() {
@@ -30,6 +27,9 @@ class MainActivity : AppCompatActivity() {
 
         lateinit var todosContainer: RecyclerView
         lateinit var todosContainerAdapter: TodosContainerAdapter
+
+        var todosCompleteToday = 0;
+        var timeCompleteToday = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +37,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         sharedPreferences = this?.getPreferences(Context.MODE_PRIVATE) ?: return
+
+        val calendar = Calendar.getInstance()
+        val dateFormat = "EEE, MMM d"
+        val statsWidgetDate: TextView = findViewById(R.id.stats_widget_date)
+        statsWidgetDate.text = SimpleDateFormat(dateFormat, Locale.CANADA).format(calendar.time)
 
         initUser()
         initData()
@@ -69,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun displayActiveTodo(activeTodo: Todo) {
-        val activeTodoNameTextView: TextView = findViewById(R.id.pomodoro_widget_todo_name)
+        val activeTodoNameTextView: TextView = findViewById(R.id.todo_widget_name)
         val activeTodoDateTextView: TextView = findViewById(R.id.pomodoro_widget_todo_date)
         val activeTodoDurationTextView: TextView = findViewById(R.id.pomodoro_widget_todo_duration)
 
@@ -80,5 +85,20 @@ class MainActivity : AppCompatActivity() {
         if (activeTodo.date == "") {
             activeTodoDateTextView.visibility = View.GONE
         }
+    }
+
+    fun updateStats() {
+        val statsWidgetRatio: TextView = findViewById(R.id.stats_widget_stats_ratio)
+        statsWidgetRatio.text = todosCompleteToday.toString()
+
+        val statsWidgetDuration: TextView = findViewById(R.id.stats_widget_stats_duration)
+        statsWidgetDuration.text = durationFormat()
+    }
+
+    private fun durationFormat() : String {
+        if (timeCompleteToday > 60) {
+            return "(${timeCompleteToday / 60} hrs)"
+        }
+        return "($timeCompleteToday mins)"
     }
 }

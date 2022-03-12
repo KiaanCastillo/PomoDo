@@ -1,7 +1,6 @@
 package com.example.pomodo
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,18 +9,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pomodo.MainActivity.Companion.todosCompleteToday
+import com.example.pomodo.MainActivity.Companion.timeCompleteToday
 import java.util.*
-import com.google.firebase.database.*
 
-class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : Context) :
+class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val context: Context) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
     lateinit var activeTodo: Todo
 
     class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
-        val name: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_name)
+        val name: TextView = todoWidget.findViewById<TextView>(R.id.todo_widget_name)
         val date: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_date)
         val duration: TextView = todoWidget.findViewById<TextView>(R.id.pomodoro_widget_todo_duration)
-        val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.pomodoro_widget_checkbox)
+        val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.todo_widget_checkbox)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,8 +34,6 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : C
         holder.name.text = todo.name
         holder.checkbox.isChecked = todo.completeDate.toString() != "null"
 
-        Log.i("PomoDo", "onBindViewHolder()")
-
         if (todo.date.toString().isEmpty()) {
             holder.date.visibility = View.GONE
         } else {
@@ -43,7 +41,7 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : C
             holder.date.text = todo.date
         }
 
-        if (todo.duration.toString() == "0") {
+        if (todo.duration == 0) {
             holder.duration.visibility = View.GONE
         } else {
             holder.duration.visibility = View.VISIBLE
@@ -56,22 +54,13 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : C
         }
 
         holder.checkbox.setOnClickListener {
-            if (todo.completeDate.toString() != "null") {
-                todo.completeDate = null
-                todos.remove(todo)
-                todos.add(0, todo)
-            } else {
-                val calendar = Calendar.getInstance()
-                todo.completeDate = calendar.timeInMillis
-                todos.remove(todo)
-                todos.add(todo)
-            }
-            notifyDataSetChanged()
-            database.updateTodo(todo)
+            todoCheckboxListener(todo)
         }
+
     }
 
     fun addItem(newTodo: Todo) {
+
         todos.add(0, newTodo)
         notifyDataSetChanged()
     }
@@ -84,6 +73,32 @@ class TodosContainerAdapter(private val todos : ArrayList<Todo>, val context : C
     fun updateItem(todo: Todo) {
         todos[todos.indexOf(todo)] = todo
         notifyDataSetChanged()
+    }
+
+    private fun todoCheckboxListener(todo: Todo) {
+        if (todo.completeDate != null) {
+            todo.completeDate = null
+            todos.remove(todo)
+            todos.add(0, todo)
+            todosCompleteToday--
+
+            if (todo.duration != 0) {
+                timeCompleteToday -= todo.duration?.toInt() ?: 0
+            }
+
+        } else {
+            val calendar = Calendar.getInstance()
+            todo.completeDate = calendar.timeInMillis
+            todos.remove(todo)
+            todos.add(todo)
+            todosCompleteToday++
+
+            if (todo.duration != 0) {
+                timeCompleteToday += todo.duration?.toInt() ?: 0
+            }
+        }
+        notifyDataSetChanged()
+        database.updateTodo(todo)
     }
 
     override fun getItemCount() = todos.size

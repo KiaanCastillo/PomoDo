@@ -56,6 +56,10 @@ class Database {
 
     fun updateTodo(updatedTodo: Todo) { userTodosDatabaseReference.child(updatedTodo.id).setValue(updatedTodo) }
 
+    fun updateTodosListInDatabase(todos: ArrayList<Todo>) {
+        userTodosDatabaseReference.setValue(todos)
+    }
+
     fun setChildEventListener(listener : ChildEventListener) {
         userTodosDatabaseReference.addChildEventListener(listener)
     }
