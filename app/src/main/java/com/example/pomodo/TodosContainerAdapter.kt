@@ -294,7 +294,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context, "1")
-            .setSmallIcon(R.drawable.icon_circle_check)
+            .setSmallIcon(R.drawable.icon_logo)
             .setContentTitle("PomoDo")
             .setContentText("${activeTodo.name} finished!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
