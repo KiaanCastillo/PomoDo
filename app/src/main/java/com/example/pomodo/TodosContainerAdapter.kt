@@ -1,13 +1,21 @@
 package com.example.pomodo
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodo.MainActivity.Companion.todosCompleteToday
@@ -64,6 +72,8 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         activeTodoCompleteButton.setOnClickListener {
             completeActiveTodo()
         }
+
+        createNotificationChannel()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -234,16 +244,24 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         val durationInMillis = activeTodo.duration?.toLong()?.times(60000)
         timer = object: CountDownTimer(durationInMillis!!, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                val durationRemainingString = String.format(
-                    "%d:%d",
-                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                val remainingMinutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
+                val remainingSeconds =
                     TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
-                )
-                activeTodoTimer.text = durationRemainingString
+
+                var remainingDurationString = "$remainingMinutes:"
+
+                if (remainingSeconds< 10) {
+                    remainingDurationString += "0"
+                }
+
+                remainingDurationString += remainingSeconds
+
+                activeTodoTimer.text = remainingDurationString
             }
 
             override fun onFinish() {
-                Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show()
+                notifyPomodoroComplete()
+                completeActiveTodo()
             }
         }
         timer.start()
@@ -267,6 +285,39 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
         activeTodoCompleteButton.visibility = View.GONE
         activeTodoStartButton.visibility = View.VISIBLE
+    }
+
+    private fun notifyPomodoroComplete() {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val builder = NotificationCompat.Builder(context, "1")
+            .setSmallIcon(R.drawable.icon_circle_check)
+            .setContentTitle("PomoDo")
+            .setContentText("${activeTodo.name} finished!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(context)) {
+            notify(1, builder.build())
+        }
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "PomoDo Notifications"
+            val descriptionText = "Notifications for the PomoDo application"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("1", name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     override fun getItemCount() = todos.size
