@@ -42,7 +42,7 @@ class TodoDialog {
         deleteButton.visibility = View.GONE
     }
 
-    constructor(context: Context, currentTodo: Todo) {
+    constructor(context: Context, currentTodo: Todo, isActiveTodo: Boolean = false) {
         this.context = context
         this.todo = currentTodo
         inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -50,7 +50,7 @@ class TodoDialog {
         initFields()
 
         actionButton.setOnClickListener {
-            updateTodo()
+            updateTodo(isActiveTodo)
         }
 
         actionButton.text = "Save"
@@ -184,8 +184,13 @@ class TodoDialog {
         return false
     }
 
-    private fun updateTodo() {
+    private fun updateTodo(isActiveTodo: Boolean = false) {
         if (isNameEditTextEmpty()) { return }
+
+        if (isActiveTodo && !todo.hasDuration()) {
+            Toast.makeText(context, "Active todo must have a duration", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val newTodoName: String = nameEditText.text.toString()
         todo.name = newTodoName

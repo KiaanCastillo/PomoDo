@@ -2,6 +2,7 @@ package com.example.pomodo
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,11 +21,27 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
     lateinit var activeTodo: Todo
 
+    private var activeTodoWidget: LinearLayout = (context as Activity).findViewById<View>(R.id.pomodoro_widget) as LinearLayout
+    private var activeTodoNameTextView: TextView = (context as Activity).findViewById<View>(R.id.pomodoro_widget_name) as TextView
+    private var activeTodoDateTextView: TextView = (context as Activity).findViewById<TextView>(R.id.pomodoro_widget_date) as TextView
+    private var activeTodoDurationTextView: TextView = (context as Activity).findViewById<TextView>(R.id.pomodoro_widget_duration) as TextView
+    private var activeTodoCheckbox: CheckBox = (context as Activity).findViewById<CheckBox>(R.id.pomodoro_widget_checkbox) as CheckBox
+    private var activeTodoTimer: TextView = (context as Activity).findViewById<TextView>(R.id.pomodoro_widget_timer) as TextView
+
     class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
         val name: TextView = todoWidget.findViewById<TextView>(R.id.name)
         val date: TextView = todoWidget.findViewById<TextView>(R.id.date)
         val duration: TextView = todoWidget.findViewById<TextView>(R.id.duration)
         val checkbox: CheckBox = todoWidget.findViewById<CheckBox>(R.id.checkbox)
+    }
+
+    init {
+        activeTodoWidget.setOnClickListener {
+            if (this::activeTodo.isInitialized) {
+                val editTodoDialog: TodoDialog = TodoDialog(context, activeTodo, true)
+                editTodoDialog.showDialog()
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -81,9 +98,16 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     fun updateItem(todo: Todo) {
+        if (this::activeTodo.isInitialized && todo.id === activeTodo.id) {
+            activeTodo = todo
+            displayActiveTodo()
+            return
+        }
+
         val index = findIndexOfTodo(todo)
 
         if (index == -1) {
+            Toast.makeText(context, "Could not update todo", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -136,8 +160,8 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
         if (!todo.hasDuration()) {
             Toast.makeText(context, "Todo must have duration in order to start a Pomodoro", Toast.LENGTH_SHORT).show()
-            val dialog: TodoDialog = TodoDialog(context, todo)
-            dialog.showDialog()
+            val editTodoDialog: TodoDialog = TodoDialog(context, todo)
+            editTodoDialog.showDialog()
             return
         }
 
@@ -153,20 +177,11 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     private fun displayActiveTodo() {
-        val activeTodoNameTextView: TextView = (context as Activity).findViewById<View>(R.id.pomodoro_widget_name) as TextView
-        val activeTodoDateTextView: TextView = context.findViewById<View>(R.id.pomodoro_widget_date) as TextView
-        val activeTodoDurationTextView: TextView = context.findViewById<View>(R.id.pomodoro_widget_duration) as TextView
-        val activeTodoCheckbox: CheckBox = context.findViewById<View>(R.id.pomodoro_widget_checkbox) as CheckBox
-
         activeTodoNameTextView.text = activeTodo.name
         activeTodoCheckbox.isChecked = activeTodo.checked()
 
-        if (activeTodo.hasDuration()) {
-            activeTodoDurationTextView.text = "${activeTodo.duration} mins"
-            activeTodoDurationTextView.visibility = View.VISIBLE
-        } else {
-            activeTodoDurationTextView.visibility = View.GONE
-        }
+        activeTodoDurationTextView.text = "${activeTodo.duration} mins"
+        activeTodoTimer.text = "${activeTodo.duration}:00"
 
         if (activeTodo.hasDate()) {
             activeTodoDateTextView.text = activeTodo.date
@@ -174,7 +189,15 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         } else {
             activeTodoDateTextView.visibility = View.GONE
         }
+    }
 
+    private fun resetActiveTodo() {
+        val defaultText = "--"
+        activeTodoDateTextView.text = defaultText
+        activeTodoDurationTextView.text = defaultText
+        activeTodoDateTextView.text = defaultText
+        activeTodoTimer.text = defaultText
+        activeTodoCheckbox.isChecked = false
     }
 
 
