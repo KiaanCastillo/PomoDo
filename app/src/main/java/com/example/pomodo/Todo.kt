@@ -45,6 +45,16 @@ class Todo(
 
     fun clearDate() { date = null }
 
+    fun clearCompleteDate() { completeDate = null }
+
+    fun resetTodo() {
+        clearDuration()
+        clearDate()
+        clearCompleteDate()
+        id = ""
+        name = ""
+    }
+
     fun check() {
         val calendar = Calendar.getInstance()
         completeDate = calendar.timeInMillis

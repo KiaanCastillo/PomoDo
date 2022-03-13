@@ -19,7 +19,7 @@ import java.util.*
 
 class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val context: Context) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
-    lateinit var activeTodo: Todo
+    private var activeTodo: Todo = Todo("", "")
 
     private var activeTodoWidget: LinearLayout = (context as Activity).findViewById<View>(R.id.pomodoro_widget) as LinearLayout
     private var activeTodoNameTextView: TextView = (context as Activity).findViewById<View>(R.id.pomodoro_widget_name) as TextView
@@ -37,9 +37,27 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
     init {
         activeTodoWidget.setOnClickListener {
-            if (this::activeTodo.isInitialized) {
+            if (isActiveTodoInitialized()) {
                 val editTodoDialog: TodoDialog = TodoDialog(context, activeTodo, true)
                 editTodoDialog.showDialog()
+            }
+
+        }
+
+        activeTodoCheckbox.isEnabled = false
+
+        activeTodoCheckbox.setOnClickListener {
+            if (isActiveTodoInitialized()) {
+                resetActiveTodoDisplay()
+                activeTodo.check()
+
+                todosCompleteToday++
+
+                if (activeTodo.hasDuration()) {
+                    timeCompleteToday += activeTodo.duration?.toInt() ?: 0
+                }
+
+                database.updateTodo(activeTodo)
             }
         }
     }
@@ -98,20 +116,19 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     fun updateItem(todo: Todo) {
-        if (this::activeTodo.isInitialized && todo.id === activeTodo.id) {
-            activeTodo = todo
-            displayActiveTodo()
-            return
+        if (isActiveTodoInitialized() && todo.id == activeTodo.id) {
+            todos.add(todo)
+            activeTodo.resetTodo()
+        } else {
+            val index = findIndexOfTodo(todo)
+
+            if (index == -1) {
+                Toast.makeText(context, "Could not update todo", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            todos[index] = todo
         }
-
-        val index = findIndexOfTodo(todo)
-
-        if (index == -1) {
-            Toast.makeText(context, "Could not update todo", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        todos[index] = todo
         notifyDataSetChanged()
     }
 
@@ -165,7 +182,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
             return
         }
 
-        if (this::activeTodo.isInitialized) {
+        if (isActiveTodoInitialized()) {
             addTodoToFront(activeTodo)
         }
 
@@ -179,9 +196,11 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     private fun displayActiveTodo() {
         activeTodoNameTextView.text = activeTodo.name
         activeTodoCheckbox.isChecked = activeTodo.checked()
+        activeTodoCheckbox.isEnabled = true
 
         activeTodoDurationTextView.text = "${activeTodo.duration} mins"
         activeTodoTimer.text = "${activeTodo.duration}:00"
+
 
         if (activeTodo.hasDate()) {
             activeTodoDateTextView.text = activeTodo.date
@@ -191,15 +210,21 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         }
     }
 
-    private fun resetActiveTodo() {
+    private fun resetActiveTodoDisplay() {
         val defaultText = "--"
-        activeTodoDateTextView.text = defaultText
+        activeTodoNameTextView.text = defaultText
+
         activeTodoDurationTextView.text = defaultText
+
         activeTodoDateTextView.text = defaultText
+        activeTodoDateTextView.visibility = View.VISIBLE
+
         activeTodoTimer.text = defaultText
         activeTodoCheckbox.isChecked = false
+        activeTodoCheckbox.isEnabled = false
     }
 
+    private fun isActiveTodoInitialized() = activeTodo.id != ""
 
     override fun getItemCount() = todos.size
 }
