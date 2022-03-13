@@ -3,23 +3,23 @@ package com.example.pomodo
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.example.pomodo.MainActivity.Companion.database
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pomodo.MainActivity.Companion.todosCompleteToday
 import com.example.pomodo.MainActivity.Companion.timeCompleteToday
 import com.example.pomodo.TodoDialog
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val context: Context) :
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
     private var activeTodo: Todo = Todo("", "")
+    private lateinit var timer: CountDownTimer
 
     private var activeTodoWidget: LinearLayout = (context as Activity).findViewById<View>(R.id.pomodoro_widget) as LinearLayout
     private var activeTodoNameTextView: TextView = (context as Activity).findViewById<View>(R.id.pomodoro_widget_name) as TextView
@@ -27,6 +27,9 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     private var activeTodoDurationTextView: TextView = (context as Activity).findViewById<TextView>(R.id.pomodoro_widget_duration) as TextView
     private var activeTodoCheckbox: CheckBox = (context as Activity).findViewById<CheckBox>(R.id.pomodoro_widget_checkbox) as CheckBox
     private var activeTodoTimer: TextView = (context as Activity).findViewById<TextView>(R.id.pomodoro_widget_timer) as TextView
+    private var activeTodoStartButton: Button = (context as Activity).findViewById<Button>(R.id.pomodoro_widget_start_button) as Button
+    private var activeTodoCompleteButton: Button = (context as Activity).findViewById<Button>(R.id.pomodoro_widget_complete_button) as Button
+
 
     class ViewHolder(val todoWidget: LinearLayout) : RecyclerView.ViewHolder (todoWidget) {
         val name: TextView = todoWidget.findViewById<TextView>(R.id.name)
@@ -41,24 +44,25 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
                 val editTodoDialog: TodoDialog = TodoDialog(context, activeTodo, true)
                 editTodoDialog.showDialog()
             }
+        }
 
+        activeTodoStartButton.setOnClickListener {
+            if (isActiveTodoInitialized()) {
+                startPomodoro()
+                activeTodoStartButton.visibility = View.GONE
+            } else {
+                Toast.makeText(context, "Long press on a todo to start a Pomodoro session for it", Toast.LENGTH_SHORT).show()
+            }
         }
 
         activeTodoCheckbox.isEnabled = false
 
         activeTodoCheckbox.setOnClickListener {
-            if (isActiveTodoInitialized()) {
-                resetActiveTodoDisplay()
-                activeTodo.check()
+            completeActiveTodo()
+        }
 
-                todosCompleteToday++
-
-                if (activeTodo.hasDuration()) {
-                    timeCompleteToday += activeTodo.duration?.toInt() ?: 0
-                }
-
-                database.updateTodo(activeTodo)
-            }
+        activeTodoCompleteButton.setOnClickListener {
+            completeActiveTodo()
         }
     }
 
@@ -225,6 +229,45 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     private fun isActiveTodoInitialized() = activeTodo.id != ""
+
+    private fun startPomodoro() {
+        val durationInMillis = activeTodo.duration?.toLong()?.times(60000)
+        timer = object: CountDownTimer(durationInMillis!!, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val durationRemainingString = String.format(
+                    "%d:%d",
+                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                    TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                )
+                activeTodoTimer.text = durationRemainingString
+            }
+
+            override fun onFinish() {
+                Toast.makeText(context, "Finished", Toast.LENGTH_SHORT).show()
+            }
+        }
+        timer.start()
+        activeTodoCompleteButton.visibility = View.VISIBLE
+    }
+
+    private fun completeActiveTodo() {
+        if (isActiveTodoInitialized()) {
+            resetActiveTodoDisplay()
+            activeTodo.check()
+
+            todosCompleteToday++
+
+            if (activeTodo.hasDuration()) {
+                timeCompleteToday += activeTodo.duration?.toInt() ?: 0
+            }
+
+            database.updateTodo(activeTodo)
+            timer.cancel()
+        }
+
+        activeTodoCompleteButton.visibility = View.GONE
+        activeTodoStartButton.visibility = View.VISIBLE
+    }
 
     override fun getItemCount() = todos.size
 }

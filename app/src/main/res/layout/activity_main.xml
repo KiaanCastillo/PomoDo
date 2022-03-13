@@ -247,6 +247,24 @@
             app:iconGravity="textStart"
             app:iconPadding="2dp"
             app:iconTint="@color/dark" />
+
+        <Button
+            android:id="@+id/pomodoro_widget_complete_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_primary"
+            android:fontFamily="@font/outfit_medium"
+            android:text="Complete"
+            android:textAllCaps="false"
+            android:textColor="@color/dark"
+            android:visibility="gone"
+            app:backgroundTint="@color/white"
+            app:icon="@drawable/icon_circle_check"
+            app:iconGravity="textStart"
+            app:iconPadding="2dp"
+            app:iconTint="@color/dark" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
