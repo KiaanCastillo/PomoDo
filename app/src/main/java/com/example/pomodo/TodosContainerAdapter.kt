@@ -105,6 +105,12 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
             holder.duration.visibility = View.GONE
         }
 
+        if (todo.checked() && !todo.completedToday()) {
+            holder.todoWidget.setBackgroundResource(0)
+        } else {
+            holder.todoWidget.setBackgroundResource(R.drawable.bg_todo_widget)
+        }
+
         holder.todoWidget.setOnClickListener {
             val editTodoDialog: TodoDialog = TodoDialog(context, todo)
             editTodoDialog.showDialog()
@@ -122,7 +128,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
     fun addItem(newTodo: Todo) {
         if (newTodo.checked()) {
-            todos.add(newTodo)
+            addToBackOfCompletedTodosToday(newTodo)
         } else {
             addTodoToFront(newTodo)
         }
@@ -136,7 +142,11 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
     fun updateItem(todo: Todo) {
         if (isActiveTodoInitialized() && todo.id == activeTodo.id) {
-            todos.add(todo)
+            if (todo.checked()) {
+                addToBackOfCompletedTodosToday(todo)
+            } else {
+                todos.add(todo)
+            }
             activeTodo.resetTodo()
         } else {
             val index = findIndexOfTodo(todo)
@@ -164,7 +174,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         } else {
             todo.check()
             todos.remove(todo)
-            todos.add(todo)
+            addToBackOfCompletedTodosToday(todo)
             todosCompleteToday++
 
             if (todo.hasDuration()) {
@@ -177,6 +187,18 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
     private fun addTodoToFront(todo: Todo) {
         todos.add(0, todo)
+    }
+
+    private fun addToBackOfCompletedTodosToday(todo: Todo) {
+        for ((index, currentTodo: Todo) in todos.withIndex()) {
+            if (currentTodo.checked() && !currentTodo.completedToday()) {
+                todos.add(index, todo)
+                notifyDataSetChanged()
+                return
+            }
+        }
+        todos.add(todo)
+        notifyDataSetChanged()
     }
 
     private fun findIndexOfTodo(todo: Todo) : Int {

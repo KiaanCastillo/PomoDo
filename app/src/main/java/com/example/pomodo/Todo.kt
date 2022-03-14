@@ -39,7 +39,7 @@ class Todo(
 
     fun checked() = completeDate != null
 
-    fun completedToday() = DateUtils.isToday(completeDate!!)
+    fun completedToday() = completeDate != null && DateUtils.isToday(completeDate!!)
 
     fun clearDuration() { duration = null }
 
