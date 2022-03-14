@@ -137,7 +137,13 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     fun removeItem(todo: Todo) {
-        todos.remove(todo)
+        val index = findIndexOfTodo(todo)
+
+        if (index == -1) {
+            Toast.makeText(context, "Could not delete todo", Toast.LENGTH_SHORT).show()
+            return
+        }
+        todos.removeAt(index)
         notifyDataSetChanged()
     }
 
