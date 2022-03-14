@@ -19,9 +19,12 @@
         <CheckBox
             android:id="@+id/checkbox"
             android:layout_width="28dp"
-            android:layout_height="24dp"
+            android:layout_height="28dp"
             android:layout_marginRight="12dp"
-            android:layout_weight="0" />
+            android:layout_weight="0"
+            android:background="@drawable/bg_checkbox"
+            android:button="@null"
+            android:focusableInTouchMode="false" />
 
         <LinearLayout
             android:layout_width="match_parent"

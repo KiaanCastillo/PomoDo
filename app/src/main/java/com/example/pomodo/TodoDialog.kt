@@ -26,8 +26,8 @@ class TodoDialog {
 
     private var todo: Todo = Todo("", "")
 
-    private val durationsStrings = arrayOf("5 mins", "10 mins", "15 mins", "20 mins", "25 mins", "30 mins", "35 mins", "40 mins", "45 mins", "50 mins", "55 mins", "60 mins")
-    private val durations = arrayOf(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
+    private val durationsStrings = arrayOf("1 min", "3 mins", "5 mins", "10 mins", "15 mins", "20 mins", "25 mins", "30 mins", "35 mins", "40 mins", "45 mins", "50 mins", "55 mins", "60 mins")
+    private val durations = arrayOf(1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
 
     constructor(context: Context) {
         this.context = context

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
@@ -52,6 +53,8 @@ class MainActivity : AppCompatActivity() {
                 apply()
             }
         }
+
+        Log.i("PomoDo", "User: $uid")
     }
 
     private fun initListeners() {

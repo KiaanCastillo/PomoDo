@@ -95,7 +95,12 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
         if (todo.hasDuration()) {
             holder.duration.visibility = View.VISIBLE
-            holder.duration.text = "${todo.duration} mins"
+
+            if (todo.duration != 1) {
+                holder.duration.text = "${todo.duration} mins"
+            } else {
+                holder.duration.text = "${todo.duration} min"
+            }
         } else {
             holder.duration.visibility = View.GONE
         }
@@ -212,7 +217,12 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         activeTodoCheckbox.isChecked = activeTodo.checked()
         activeTodoCheckbox.isEnabled = true
 
-        activeTodoDurationTextView.text = "${activeTodo.duration} mins"
+        if (activeTodo.duration != 1) {
+            activeTodoDurationTextView.text = "${activeTodo.duration} mins"
+        } else {
+            activeTodoDurationTextView.text = "${activeTodo.duration} min"
+        }
+
         activeTodoTimer.text = "${activeTodo.duration}:00"
 
 
@@ -225,7 +235,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     }
 
     private fun resetActiveTodoDisplay() {
-        val defaultText = "--"
+        val defaultText = "—"
         activeTodoNameTextView.text = defaultText
 
         activeTodoDurationTextView.text = defaultText
@@ -233,12 +243,14 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         activeTodoDateTextView.text = defaultText
         activeTodoDateTextView.visibility = View.VISIBLE
 
-        activeTodoTimer.text = defaultText
+        activeTodoTimer.text = "0:00"
         activeTodoCheckbox.isChecked = false
         activeTodoCheckbox.isEnabled = false
     }
 
     private fun isActiveTodoInitialized() = activeTodo.id != ""
+
+    private fun isTimerInitialized() = this::timer.isInitialized
 
     private fun startPomodoro() {
         val durationInMillis = activeTodo.duration?.toLong()?.times(60000)
@@ -280,7 +292,10 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
             }
 
             database.updateTodo(activeTodo)
-            timer.cancel()
+
+            if (isTimerInitialized()) {
+                timer.cancel()
+            }
         }
 
         activeTodoCompleteButton.visibility = View.GONE

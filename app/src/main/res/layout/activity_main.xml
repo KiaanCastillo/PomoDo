@@ -175,9 +175,13 @@
                 <CheckBox
                     android:id="@+id/pomodoro_widget_checkbox"
                     android:layout_width="28dp"
-                    android:layout_height="24dp"
+                    android:layout_height="28dp"
                     android:layout_marginRight="12dp"
-                    android:layout_weight="0" />
+                    android:layout_weight="0"
+                    android:background="@drawable/checkbox_unchecked_pomodoro_widget"
+                    android:button="@null"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -191,7 +195,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="@font/outfit_medium"
-                        android:text="--"
+                        android:text="—"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
@@ -200,7 +204,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/outfit_regular"
-                        android:text="--"
+                        android:text="—"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -213,7 +217,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:fontFamily="@font/outfit_regular"
-                android:text="--"
+                android:text="—"
                 android:textColor="@color/white" />
 
         </LinearLayout>
