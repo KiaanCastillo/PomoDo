@@ -1,10 +1,8 @@
 package com.example.pomodo
 
-import android.app.Activity
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
@@ -28,6 +26,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
     RecyclerView.Adapter<TodosContainerAdapter.ViewHolder>() {
     private var activeTodo: Todo = Todo("", "")
     private lateinit var timer: CountDownTimer
+    private var isPomodoroStarted = false
 
     private var activeTodoWidget: LinearLayout = (context as Activity).findViewById<View>(R.id.pomodoro_widget) as LinearLayout
     private var activeTodoNameTextView: TextView = (context as Activity).findViewById<View>(R.id.pomodoro_widget_name) as TextView
@@ -48,7 +47,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
     init {
         activeTodoWidget.setOnClickListener {
-            if (isActiveTodoInitialized()) {
+            if (isActiveTodoInitialized() && !isPomodoroStarted) {
                 val editTodoDialog: TodoDialog = TodoDialog(context, activeTodo, true)
                 editTodoDialog.showDialog()
             }
@@ -57,6 +56,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         activeTodoStartButton.setOnClickListener {
             if (isActiveTodoInitialized()) {
                 startPomodoro()
+                isPomodoroStarted = true
                 activeTodoStartButton.visibility = View.GONE
             } else {
                 Toast.makeText(context, "Long press on a todo to start a Pomodoro session for it", Toast.LENGTH_SHORT).show()
@@ -118,7 +118,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         }
 
         holder.todoWidget.setOnLongClickListener {
-            todoLongPressListener(todo)
+            setActiveTodo(todo)
             true
         }
 
@@ -160,10 +160,11 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         if (isActiveTodoInitialized() && todo.id == activeTodo.id) {
             if (todo.checked()) {
                 addToBackOfCompletedTodosToday(todo)
+                activeTodo.resetTodo()
             } else {
-                todos.add(todo)
+                activeTodo = todo
+                displayActiveTodo()
             }
-            activeTodo.resetTodo()
         } else {
             val index = findIndexOfTodo(todo)
 
@@ -226,7 +227,12 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         return -1
     }
 
-    private fun todoLongPressListener(todo: Todo) {
+    private fun setActiveTodo(todo: Todo) {
+        if (isPomodoroStarted) {
+            displayReplaceActiveTodoDialog(todo)
+            return
+        }
+
         if (todo.checked()) {
             Toast.makeText(context, "Todo must be incomplete in order to start a Pomodoro", Toast.LENGTH_SHORT).show()
             return
@@ -248,6 +254,26 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
         todos.remove(todo)
         notifyDataSetChanged()
+    }
+
+    private fun displayReplaceActiveTodoDialog(todo: Todo) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Are you sure you want to change the active todo?")
+
+        builder.setPositiveButton("Yes") { _, _ ->
+            timer.cancel()
+            isPomodoroStarted = false
+            setActiveTodo(todo)
+            activeTodoCompleteButton.visibility = View.GONE
+            activeTodoStartButton.visibility = View.VISIBLE
+        }
+
+        builder.setNegativeButton("No") { dialogue, _ ->
+            dialogue.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun displayActiveTodo() {
@@ -340,6 +366,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
 
         activeTodoCompleteButton.visibility = View.GONE
         activeTodoStartButton.visibility = View.VISIBLE
+        isPomodoroStarted = false
     }
 
     private fun notifyPomodoroComplete() {
