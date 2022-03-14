@@ -64,6 +64,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         }
 
         activeTodoCheckbox.isEnabled = false
+        activeTodoTimer.visibility = View.GONE
 
         activeTodoCheckbox.setOnClickListener {
             completeActiveTodo()
@@ -246,7 +247,7 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         }
 
         activeTodoTimer.text = "${activeTodo.duration}:00"
-
+        activeTodoTimer.visibility = View.VISIBLE
 
         if (activeTodo.hasDate()) {
             activeTodoDateTextView.text = activeTodo.date
@@ -266,6 +267,8 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
         activeTodoDateTextView.visibility = View.VISIBLE
 
         activeTodoTimer.text = "0:00"
+        activeTodoTimer.visibility = View.GONE
+
         activeTodoCheckbox.isChecked = false
         activeTodoCheckbox.isEnabled = false
     }

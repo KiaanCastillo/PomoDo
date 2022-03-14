@@ -27,10 +27,8 @@ fun MainActivity.initDataListeners() {
             var addedTodo: Todo = createTodoFromSnapshot(snapshot)
             todosContainerAdapter.addItem(addedTodo)
 
-            if (addedTodo.checked()) {
-                if (addedTodo.completedToday()) {
-                    todosCompleteToday++
-                }
+            if (addedTodo.checked() && addedTodo.completedToday()) {
+                todosCompleteToday++
 
                 if (addedTodo.hasDuration()) {
                     timeCompleteToday += addedTodo.duration!!.toInt()
