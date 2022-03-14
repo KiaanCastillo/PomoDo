@@ -143,6 +143,15 @@ class TodosContainerAdapter(private val todos: ArrayList<Todo>, private val cont
             Toast.makeText(context, "Could not delete todo", Toast.LENGTH_SHORT).show()
             return
         }
+
+        if (todo.checked() && todo.completedToday()) {
+            todosCompleteToday--
+
+            if (todo.hasDuration()) {
+                timeCompleteToday -= todo.duration!!.toInt()
+            }
+        }
+
         todos.removeAt(index)
         notifyDataSetChanged()
     }
